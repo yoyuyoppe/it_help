@@ -11,7 +11,7 @@ class Orders(models.Model):
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'
 
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Автор")
+    author = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name="Автор")
     theme = models.CharField(verbose_name="Тема", max_length=250)
     content = models.TextField(verbose_name="Текст", null=True)
     create_date = models.DateTimeField(verbose_name="Создано", auto_now_add=True)
