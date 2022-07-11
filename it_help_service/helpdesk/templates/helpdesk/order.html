@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказ №{{order.id}}</title>
+</head>
+<body>
+<h1>Заказ №{{order.id}} от {{order.create_date}}</h1>
+<hr>
+    <p>Тема: {{order.theme}}</p>
+    <p>Текст: {{order.content}}</p>
+    <p>Статус: {{order.status}}</p>
+    <p>Автор: {{order.author.username}}</p>
+    <p>Дата изменения: {{order.edit_date}}</p>
+</body>
+</html>

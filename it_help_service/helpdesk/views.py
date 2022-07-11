@@ -1,17 +1,25 @@
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+from .models import Orders
 
 
 def index(request):
     # todo должна быть логика для новых отображения обращений (Админ видит все обращения, а обычный пользователь только свои)
-    # todo добавить шаблон главной страницы
-    return HttpResponse("Здесь будет отображаться список новых обращений")
+    # todo добавить стилей в шаблон index.html
+    orders = Orders.objects.filter(status='new').order_by('create_date')
+    context = {
+        'orders': orders
+    }
+    return render(request, 'helpdesk/index.html', context)
 
 
 def detail(request, order_id):
-    # todo добавить шаблон для отображения деталей по заказу
-    return HttpResponse(f"Детализация по задаче №{order_id}")
+    # todo добавить стилей в шаблон order.html
+    order = get_object_or_404(Orders, pk=order_id)
+    return render(request, 'helpdesk/order.html', {'order': order})
 
 
 def orders(request):
-    # todo добавить шаблон для отображения списка всех обращений
-    return HttpResponse("Здесь будет отображаться список всех обращений")
+    # todo добавить стилей в шаблон orders.html
+    orders = Orders.objects.all()
+    return render(request, 'helpdesk/orders.html', {'orders': orders})

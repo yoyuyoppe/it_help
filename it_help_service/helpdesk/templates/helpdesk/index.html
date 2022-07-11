@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HELPDESK</title>
+</head>
+<body>
+{% if orders %}
+    <ul>
+    {% for order in orders %}
+        <li><a href="{% url 'helpdesk:detail' order.id %}">{{ order }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет новых обращений</p>
+{% endif %}
+</body>
+</html>
