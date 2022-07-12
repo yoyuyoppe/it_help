@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
+import mimetypes
+from .validators import validate_file_extension
 
 
 class Orders(models.Model):
@@ -27,3 +29,68 @@ class Orders(models.Model):
     def save(self, *args, **kwargs):
         self.edit_date = datetime.now()
         super().save(self, *args, **kwargs)
+
+
+def attachment_path(instance, filename):
+    return instance.attachment_path(filename)
+
+
+class Attachment(models.Model):
+    """
+    Представляет файл, прикрепленный к последующему действию.
+    Это может быть вложение в электронном письме или загрузка через веб-интерфейс.
+    """
+
+    class Meta:
+        verbose_name = 'Вложение'
+        verbose_name_plural = 'Вложения'
+        db_table = 'attachments'
+
+    order = models.ForeignKey(
+        Orders,
+        on_delete=models.CASCADE,
+        verbose_name='Обращение'
+    )
+
+    file = models.BinaryField()
+
+    filename = models.CharField(
+        blank=True,
+        max_length=1000,
+        validators=[validate_file_extension]
+    )
+
+    mime_type = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
+    size = models.IntegerField(
+        blank=True,
+        help_text='Размер файла в байтах',
+    )
+
+    def __str__(self):
+        return '%s' % self.filename
+
+    def save(self, *args, **kwargs):
+
+        if not self.size:
+            self.size = self.get_size()
+
+        if not self.filename:
+            self.filename = self.get_filename()
+
+        if not self.mime_type:
+            self.mime_type = \
+                mimetypes.guess_type(self.filename, strict=False)[0] or \
+                'application/octet-stream'
+
+        return super.save(*args, **kwargs)
+
+    def get_filename(self):
+        return str(self.file)
+
+    def get_size(self):
+        return self.file.file.size
+
